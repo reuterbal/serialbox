@@ -19,6 +19,7 @@
 #include "serialbox/core/MetainfoMapImpl.h"
 #include <functional>
 #include <iosfwd>
+#include <memory>
 #include <string>
 #include <utility>
 
