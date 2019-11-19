@@ -74,6 +74,13 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Cray")
     ### unable to compile Serialbox. Only Cray >= 8.7 is supported.
         ")
     endif()
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "PGI")
+    message(WARNING "
+    ### You appear to be using PGI ${CMAKE_CXX_COMPILER_VERSION}, which could have certain issues.
+    ### If so, you can try
+    ###
+    ###    cmake .. -DCMAKE_CXX_EXTENSIONS=ON -DSERIALBOX_ENABLE_EXPERIMENTAL_FILESYSTEM=OFF
+    ")
 else()
     message(WARNING "
     ### You appear to be using a compiler that is not yet tested with Serialbox 2.

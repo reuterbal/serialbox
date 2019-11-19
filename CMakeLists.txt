@@ -17,8 +17,12 @@ cmake_policy(SET CMP0048 NEW)
 project(Serialbox LANGUAGES C CXX VERSION 2.5.5)
 cmake_minimum_required(VERSION 3.9.0)
 
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_C_EXTENSIONS OFF)
+if( NOT DEFINED CMAKE_CXX_EXTENSIONS )
+  set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
+if( NOT DEFINED CMAKE_C_EXTENSIONS )
+  set(CMAKE_C_EXTENSIONS OFF)
+endif()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 include(ExternalProject)
@@ -83,7 +87,8 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Shared architecture flags
-if( NOT ( CMAKE_CXX_COMPILER_ID MATCHES "Cray" ) )
+if( NOT ( CMAKE_CXX_COMPILER_ID MATCHES "Cray" ) AND
+    NOT ( CMAKE_CXX_COMPILER_ID MATCHES "PGI" ) )
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 endif()
 
