@@ -15,6 +15,7 @@
 #include "serialbox/core/archive/MockArchive.h"
 #include "serialbox/core/Unreachable.h"
 #include <chrono>
+#include <random>
 
 namespace serialbox {
 
