@@ -34,3 +34,16 @@ function( serialbox_install_targets )
     endif()
   endforeach()
 endfunction()
+
+
+
+# The file SerialboxTargets.cmake created by "serialbox_install_targets" function gets always
+# appended. Therefore it needs to be deleted and rebuilt every time cmake is executed.
+# Following guards the removal of SerialboxTargets.cmake to be executed only once
+
+get_property( _SERIALBOX_INSTALL_TARGETS_INCLUDED GLOBAL PROPERTY SERIALBOX_INSTALL_TARGETS_INCLUDED SET )
+if( NOT _SERIALBOX_INSTALL_TARGETS_INCLUDED )
+  set_property( GLOBAL PROPERTY SERIALBOX_INSTALL_TARGETS_INCLUDED TRUE )
+  file( REMOVE ${PROJECT_BINARY_DIR}/SerialboxTargets.cmake )
+endif()
+

@@ -89,6 +89,7 @@ target_link_libraries(SerialboxStatic PUBLIC SerialboxObjects)
 if(BUILD_SHARED_LIBS)
     add_library(SerialboxShared $<TARGET_OBJECTS:SerialboxObjects>)
     set_target_properties(SerialboxShared PROPERTIES VERSION ${Serialbox_VERSION_STRING})
+    set_target_properties(SerialboxShared PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
     target_link_libraries(SerialboxShared PUBLIC SerialboxObjects)
 endif()
 

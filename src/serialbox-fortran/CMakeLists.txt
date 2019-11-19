@@ -11,13 +11,12 @@ cmake_minimum_required(VERSION 3.12)
 
 if(SERIALBOX_ENABLE_FORTRAN)
 
+  if( NOT DEFINED CMAKE_Fortran_MODULE_DIRECTORY )
+    set( CMAKE_Fortran_MODULE_DIRECTORY ${PROJECT_BINARY_DIR}/module )
+  endif()
+
   set(SOURCES_FORTRAN_SERIALIZE m_serialize.f90 m_ser_perturb.f90)
   add_library(SerialboxFortranSerializeObjects OBJECT ${SOURCES_FORTRAN_SERIALIZE})
-  target_include_directories(SerialboxFortranSerializeObjects
-    PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
-        $<INSTALL_INTERFACE:include>
-    )
   
   set(SOURCES_FORTRAN utils_ppser.f90 )
   if (SERIALBOX_ENABLE_FTG)
@@ -25,28 +24,35 @@ if(SERIALBOX_ENABLE_FORTRAN)
   endif()
 
   add_library(SerialboxFortranObjects OBJECT ${SOURCES_FORTRAN})
-  target_link_libraries(SerialboxFortranObjects SerialboxFortranSerializeObjects)
-  target_include_directories(SerialboxFortranObjects
-    PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}> # for .mod files
-        $<INSTALL_INTERFACE:include>
-    )
+  target_link_libraries(SerialboxFortranObjects PUBLIC SerialboxFortranSerializeObjects)
 
   add_library(SerialboxFortranStatic STATIC $<TARGET_OBJECTS:SerialboxFortranSerializeObjects> $<TARGET_OBJECTS:SerialboxFortranObjects>)
-  target_link_libraries(SerialboxFortranStatic PUBLIC SerialboxFortranObjects)
-  target_link_libraries(SerialboxFortranStatic PUBLIC SerialboxFortranSerializeObjects)
-  target_link_libraries(SerialboxFortranStatic PUBLIC SerialboxCStatic)
+  target_link_libraries(SerialboxFortranStatic PRIVATE SerialboxFortranObjects)
+  target_link_libraries(SerialboxFortranStatic PRIVATE SerialboxFortranSerializeObjects)
+  target_link_libraries(SerialboxFortranStatic PRIVATE SerialboxCStatic)
   set_target_properties(SerialboxFortranStatic PROPERTIES VERSION ${Serialbox_VERSION_STRING})
+  set_target_properties(SerialboxFortranStatic PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
+  target_include_directories(SerialboxFortranStatic
+    INTERFACE
+        $<BUILD_INTERFACE:${CMAKE_Fortran_MODULE_DIRECTORY}> # for .mod files
+        $<INSTALL_INTERFACE:include>
+    )
 
 
   if(BUILD_SHARED_LIBS)
     set_target_properties( SerialboxFortranSerializeObjects PROPERTIES POSITION_INDEPENDENT_CODE ON )
     set_target_properties( SerialboxFortranObjects PROPERTIES POSITION_INDEPENDENT_CODE ON )
     add_library(SerialboxFortranShared SHARED $<TARGET_OBJECTS:SerialboxFortranSerializeObjects> $<TARGET_OBJECTS:SerialboxFortranObjects>)
-    target_link_libraries(SerialboxFortranShared PUBLIC SerialboxFortranObjects)
-    target_link_libraries(SerialboxFortranShared PUBLIC SerialboxFortranSerializeObjects)
-    target_link_libraries(SerialboxFortranShared PUBLIC SerialboxCShared)
-    set_target_properties(SerialboxFortranShared PROPERTIES VERSION ${Serialbox_VERSION_STRING})    
+    target_link_libraries(SerialboxFortranShared PRIVATE SerialboxFortranObjects)
+    target_link_libraries(SerialboxFortranShared PRIVATE SerialboxFortranSerializeObjects)
+    target_link_libraries(SerialboxFortranShared PRIVATE SerialboxCShared)
+    set_target_properties(SerialboxFortranShared PROPERTIES VERSION ${Serialbox_VERSION_STRING})
+    set_target_properties(SerialboxFortranShared PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
+    target_include_directories(SerialboxFortranShared
+      INTERFACE
+          $<BUILD_INTERFACE:${CMAKE_Fortran_MODULE_DIRECTORY}> # for .mod files
+          $<INSTALL_INTERFACE:include>
+      )
   endif()
 
   serialbox_install_targets( TARGETS 
@@ -56,15 +62,6 @@ if(SERIALBOX_ENABLE_FORTRAN)
     SerialboxFortranSerializeObjects
   )
 
-
   # Install mod files
-  foreach(source ${SOURCES_FORTRAN} ${SOURCES_FORTRAN_SERIALIZE})
-    get_filename_component(module_name ${source} NAME_WE)
-
-    if("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Cray")
-      string(TOUPPER ${module_name} module_name)
-    endif()
-    
-    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${module_name}.mod" DESTINATION include)
-  endforeach()
+  install(DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}/ DESTINATION include)
 endif()

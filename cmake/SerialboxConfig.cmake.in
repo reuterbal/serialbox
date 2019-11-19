@@ -108,9 +108,8 @@ endfunction()
 #====--------------------------------------------------------------------------------------------===
 
 # Import library targets
-if( NOT @PROJECT_NAME@_TARGETS_EXPORTED )
+if( NOT @PROJECT_NAME@_BINARY_DIR AND NOT TARGET Serialbox::SerialboxStatic )
   include("${CMAKE_CURRENT_LIST_DIR}/SerialboxTargets.cmake")
-  set( ${PROJECT_NAME}_TARGETS_EXPORTED TRUE )
 endif()
 
 set(SERIALBOX_HAS_SHARED_LIBRARY FALSE)
