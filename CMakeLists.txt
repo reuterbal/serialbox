@@ -65,6 +65,7 @@ option(SERIALBOX_TESTING_STELLA "Build STELLA unitests" OFF)
 option(SERIALBOX_TESTING_DEATH_TESTS "Run death-tests" OFF)
 option(SERIALBOX_TESTING_LARGE_FILE_TESTS "Run large file (>4GB) tests" OFF)
 option(SERIALBOX_TESTING_FORTRAN "Build tests for the Fortran interface")
+option(SERIALBOX_TESTING_EXPORT "Build tests to check if installation works correctly" OFF)
 
 option(SERIALBOX_BENCHMARKING "Build benchmark exectuables" OFF)
 option(SERIALBOX_DOCUMENTATION "Build and install the documentation" OFF)
@@ -163,7 +164,8 @@ set(SERIALBOX_EXTERNAL_LIBRARIES)
 if(SERIALBOX_TESTING_GRIDTOOLS OR 
    SERIALBOX_TESTING_STELLA OR 
    SERIALBOX_TESTING_DEATH_TESTS OR
-   SERIALBOX_TESTING_FORTRAN)
+   SERIALBOX_TESTING_FORTRAN OR
+   SERIALBOX_TESTING_EXPORT)
  set(SERIALBOX_TESTING ON)
 endif()
 

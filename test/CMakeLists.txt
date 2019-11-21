@@ -76,6 +76,7 @@ endfunction(serialbox_add_unittest_executable)
 ## Add subdirectories
 add_subdirectory(utility)
 add_subdirectory(serialbox)
+add_subdirectory(export)
 
 if(SERIALBOX_ENABLE_C)
   add_subdirectory(serialbox-c)
